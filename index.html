@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Our Secret Love Notes</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="password-section">
+    <h2>Enter Password to Access Love Notes</h2>
+    <input type="password" id="password" placeholder="Enter password">
+    <button onclick="checkPassword()">Submit</button>
+    <div id="wrong-password-message"></div>
+  </div>
+
+  <div id="notes-section" style="display: none;">
+    <h1>Love Notes ❤️</h1>
+    <textarea id="new-note" placeholder="Leave a love note..."></textarea><br>
+    <button onclick="addNote()">Add Note</button>
+    <h2>Our Notes</h2>
+    <div id="notes-list"></div>
+  </div>
+
+  <script src="scripts.js"></script>
+</body>
+</html>
