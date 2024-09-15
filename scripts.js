@@ -1,3 +1,19 @@
+// Initialize Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyB6QUxxoIBxtgmBf_AJIchVY1s_QAfnh7I",
+  authDomain: "deepaktech-fe70f.firebaseapp.com",
+  projectId: "deepaktech-fe70f",
+  storageBucket: "deepaktech-fe70f.appspot.com",
+  messagingSenderId: "894349316629",
+  appId: "1:894349316629:web:ba0643eea58688448f741c",
+  measurementId: "G-NS6T8293VR"
+};
+
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const analytics = firebase.analytics(app);
+
+//My love note codes
 const passwords = {
   koibito: "KoibitoPass", // Password for you
   koi: "KoiPass"          // Password for your girlfriend
