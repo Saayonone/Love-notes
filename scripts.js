@@ -1,3 +1,26 @@
+//Firebase configuration code
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyB6QUxxoIBxtgmBf_AJIchVY1s_QAfnh7I",
+  authDomain: "deepaktech-fe70f.firebaseapp.com",
+  projectId: "deepaktech-fe70f",
+  storageBucket: "deepaktech-fe70f.appspot.com",
+  messagingSenderId: "894349316629",
+  appId: "1:894349316629:web:ba0643eea58688448f741c",
+  measurementId: "G-NS6T8293VR"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+//My Love notes javascript code goes below... 
 const passwords = {
   koibito: "KoibitoPass", // Password for you
   koi: "KoiPass"          // Password for your girlfriend
