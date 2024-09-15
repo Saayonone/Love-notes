@@ -1,3 +1,31 @@
+function addNote() {
+  const newNote = document.getElementById("new-note").value;
+  if (newNote) {
+    db.collection("loveNotes").add({
+      name: currentUser,
+      text: newNote,
+      timestamp: new Date()
+    }).then(() => {
+      document.getElementById("new-note").value = "";
+      loadNotes(); // Reload notes from Firestore
+    });
+  }
+}
+
+function loadNotes() {
+  const notesList = document.getElementById("notes-list");
+  notesList.innerHTML = ""; // Clear existing notes
+
+  db.collection("loveNotes").orderBy("timestamp").get().then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      const note = doc.data();
+      const noteItem = document.createElement("div");
+      noteItem.className = "note-item";
+      noteItem.innerHTML = `<strong>${note.name}</strong>: ${note.text}`;
+      notesList.appendChild(noteItem);
+    });
+  });
+}
 //Firebase configuration code
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
