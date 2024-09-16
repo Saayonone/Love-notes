@@ -1,65 +1,71 @@
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-
-const db = getFirestore();
-
-// Two passwords for identifying users
-const passwords = {
-  koibito: "KoibitoPass", // Password for you
-  koi: "KoiPass"          // Password for your girlfriend
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyB6QUxxoIBxtgmBf_AJIchVY1s_QAfnh7I",
+  authDomain: "deepaktech-fe70f.firebaseapp.com",
+  projectId: "deepaktech-fe70f",
+  storageBucket: "deepaktech-fe70f.appspot.com",
+  messagingSenderId: "894349316629",
+  appId: "1:894349316629:web:680353b6e18f90878f741c",
+  measurementId: "G-WQJQ1S5F9F"
 };
 
-let currentUser = "";
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-// Check if the entered password is correct
+let currentUser = "";  // To store current user's name
+const passwords = {
+  koibito: "KoibitoPass",
+  koi: "KoiPass"
+};
+
+// Function to check the password and set the user
 function checkPassword() {
   const inputPassword = document.getElementById("password").value;
-  const wrongPasswordMessage = document.getElementById("wrong-password-message");
-
   if (inputPassword === passwords.koibito) {
-    currentUser = "Koibito ♡";
-    wrongPasswordMessage.innerHTML = "";
+    currentUser = "Koibito ♡";  // Set name for Koibito
     document.getElementById("password-section").style.display = "none";
     document.getElementById("notes-section").style.display = "block";
-    loadNotes();
+    loadNotes();  // Load the notes once password is correct
   } else if (inputPassword === passwords.koi) {
-    currentUser = "Koi ♡>ω<♡";
-    wrongPasswordMessage.innerHTML = "";
+    currentUser = "Koi ♡>ω<♡";  // Set name for Koi
     document.getElementById("password-section").style.display = "none";
     document.getElementById("notes-section").style.display = "block";
     loadNotes();
   } else {
-    wrongPasswordMessage.innerHTML = "Wrong password, try again!";
+    document.getElementById("wrong-password-message").innerText = "Wrong password, try again!";
   }
 }
 
-// Load notes from Firestore and display them
-async function loadNotes() {
-  const querySnapshot = await getDocs(collection(db, "loveNotes"));
-  const notesList = document.getElementById("notes-list");
-  notesList.innerHTML = "";
+// Function to add a new note to Firestore
+async function addNote() {
+  const newNote = document.getElementById("new-note").value;
+  if (newNote) {
+    // Add the new note to Firestore with user info
+    await db.collection("loveNotes").add({
+      name: currentUser,    // Add current user's name
+      text: newNote,        // The note text
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()  // Add timestamp
+    });
+    document.getElementById("new-note").value = "";  // Clear the input field
+    loadNotes();  // Reload notes after adding
+  }
+}
 
+// Function to load notes from Firestore and display them
+async function loadNotes() {
+  const notesList = document.getElementById("notes-list");
+  notesList.innerHTML = "";  // Clear the list first
+
+  // Query Firestore to get all love notes ordered by timestamp
+  const querySnapshot = await db.collection("loveNotes").orderBy("timestamp", "desc").get();
+
+  // Loop through the notes and display them
   querySnapshot.forEach((doc) => {
     const noteData = doc.data();
     const noteItem = document.createElement("div");
     noteItem.className = "note-item";
     noteItem.innerHTML = `<strong>${noteData.name}</strong>: ${noteData.text}`;
-    notesList.appendChild(noteItem);
+    notesList.appendChild(noteItem);  // Append the note to the list
   });
-}
-
-// Add a new note to Firestore
-async function addNote() {
-  const newNote = document.getElementById("new-note").value;
-  if (newNote) {
-    try {
-      await addDoc(collection(db, "loveNotes"), {
-        name: currentUser,
-        text: newNote
-      });
-      document.getElementById("new-note").value = "";
-      loadNotes();
-    } catch (e) {
-      console.error("Error adding note: ", e);
-    }
-  }
 }
