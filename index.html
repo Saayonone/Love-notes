@@ -20,9 +20,34 @@
     <div id="notes-list"></div>
   </div>
 
-  <!-- Include Firebase JS SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <!-- Firebase Configuration and Initialization -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyB6QUxxoIBxtgmBf_AJIchVY1s_QAfnh7I",
+      authDomain: "deepaktech-fe70f.firebaseapp.com",
+      projectId: "deepaktech-fe70f",
+      storageBucket: "deepaktech-fe70f.appspot.com",
+      messagingSenderId: "894349316629",
+      appId: "1:894349316629:web:ba0643eea58688448f741c",
+      measurementId: "G-NS6T8293VR"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+
+    // Expose the `db` variable to be used in the external JavaScript file
+    window.db = db;
+  </script>
+
+  <!-- Link to external JavaScript file -->
   <script src="scripts.js"></script>
 </body>
 </html>
