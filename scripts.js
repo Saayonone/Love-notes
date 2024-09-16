@@ -1,18 +1,3 @@
-// Firebase Configuration (paste your Firebase config here)
-const firebaseConfig = {
-  apiKey: "AIzaSyB6QUxxoIBxtgmBf_AJIchVY1s_QAfnh7I",
-  authDomain: "deepaktech-fe70f.firebaseapp.com",
-  projectId: "deepaktech-fe70f",
-  storageBucket: "deepaktech-fe70f.appspot.com",
-  messagingSenderId: "894349316629",
-  appId: "1:894349316629:web:ba0643eea58688448f741c",
-  measurementId: "G-NS6T8293VR"
-};
-
-// Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
 const passwords = {
   koibito: "KoibitoPass", // Password for you
   koi: "KoiPass"          // Password for your girlfriend
@@ -20,6 +5,7 @@ const passwords = {
 
 let currentUser = "";
 
+// Check password for accessing notes
 function checkPassword() {
   const inputPassword = document.getElementById("password").value;
   const wrongPasswordMessage = document.getElementById("wrong-password-message");
@@ -41,33 +27,35 @@ function checkPassword() {
   }
 }
 
-// Load notes from Firebase Firestore
-function loadNotes() {
+// Load notes from Firestore database
+async function loadNotes() {
   const notesList = document.getElementById("notes-list");
-  notesList.innerHTML = "";
+  notesList.innerHTML = ""; // Clear previous notes
 
-  db.collection("loveNotes").orderBy("timestamp", "asc").get().then((querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-      const noteData = doc.data();
-      const noteItem = document.createElement("div");
-      noteItem.className = "note-item";
-      noteItem.innerHTML = `<strong>${noteData.name}</strong>: ${noteData.text} <br><small>${new Date(noteData.timestamp).toLocaleString()}</small>`;
-      notesList.appendChild(noteItem);
-    });
+  const querySnapshot = await getDocs(collection(window.db, "loveNotes"));
+  querySnapshot.forEach((doc) => {
+    const note = doc.data();
+    const noteItem = document.createElement("div");
+    noteItem.className = "note-item";
+    noteItem.innerHTML = `<strong>${note.name}</strong> (${note.time}): ${note.text}`;
+    notesList.appendChild(noteItem);
   });
 }
 
-// Add a new note to Firebase Firestore
-function addNote() {
+// Add a new note to Firestore
+async function addNote() {
   const newNote = document.getElementById("new-note").value;
   if (newNote) {
-    db.collection("loveNotes").add({
+    const currentTime = new Date().toLocaleString(); // Get current time
+
+    // Add new note to Firestore
+    await addDoc(collection(window.db, "loveNotes"), {
       name: currentUser,
       text: newNote,
-      timestamp: new Date().getTime()  // Add timestamp
-    }).then(() => {
-      document.getElementById("new-note").value = "";
-      loadNotes();
+      time: currentTime
     });
+
+    document.getElementById("new-note").value = ""; // Clear the input field
+    loadNotes(); // Reload notes to show the new one
   }
 }
