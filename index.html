@@ -20,13 +20,13 @@
     <div id="notes-list"></div>
   </div>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase configuration and script -->
   <script type="module">
-    // Import Firebase SDKs
+    // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    // Your Firebase configuration
+    // Your web app's Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyB6QUxxoIBxtgmBf_AJIchVY1s_QAfnh7I",
       authDomain: "deepaktech-fe70f.firebaseapp.com",
@@ -37,14 +37,13 @@
       measurementId: "G-NS6T8293VR"
     };
 
-    // Initialize Firebase and Firestore
+    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Export Firestore so that it can be used in scripts.js
-    export { db, collection, addDoc, getDocs };
+    // Your JavaScript code goes below
   </script>
 
-  <script src="scripts.js"></script>
+  <script src="scripts.js" type="module"></script>
 </body>
 </html>
