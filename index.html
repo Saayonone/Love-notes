@@ -1,37 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Love Notes</title>
+  <title>Our Secret Love Notes</title>
   <link rel="stylesheet" href="styles.css">
-  <!-- Firebase App (the core Firebase SDK) is always required and must be first -->
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-  <!-- Add other Firebase SDKs that you need -->
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
-  <!-- Initialize Firebase -->
-  <script>
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyB6QUxxoIBxtgmBf_AJIchVY1s_QAfnh7I",
-      authDomain: "deepaktech-fe70f.firebaseapp.com",
-      projectId: "deepaktech-fe70f",
-      storageBucket: "deepaktech-fe70f.appspot.com",
-      messagingSenderId: "894349316629",
-      appId: "1:894349316629:web:680353b6e18f90878f741c",
-      measurementId: "G-WQJQ1S5F9F"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-  </script>
 </head>
 <body>
-  <!-- Your content here -->
-  <textarea id="new-note" placeholder="Leave a love note..."></textarea><br>
-  <button onclick="addNote()">Add Note</button>
-  <h2>Our Notes</h2>
-  <div id="notes-list"></div>
-  
+  <div id="password-section">
+    <h2>Enter Password to Access Love Notes</h2>
+    <input type="password" id="password" placeholder="Enter password">
+    <button onclick="checkPassword()">Submit</button>
+    <div id="wrong-password-message"></div>
+  </div>
+
+  <div id="notes-section" style="display: none;">
+    <h1>Love Notes ❤️</h1>
+    <textarea id="new-note" placeholder="Leave a love note..."></textarea><br>
+    <button onclick="addNote()">Add Note</button>
+    <h2>Our Notes</h2>
+    <div id="notes-list"></div>
+  </div>
+
   <script src="scripts.js"></script>
 </body>
 </html>
