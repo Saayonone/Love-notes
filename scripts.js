@@ -1,5 +1,8 @@
-// Firebase SDK is initialized in the HTML file, no need for import statements here
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
+const db = getFirestore();
+
+// Two passwords for identifying users
 const passwords = {
   koibito: "KoibitoPass", // Password for you
   koi: "KoiPass"          // Password for your girlfriend
@@ -7,7 +10,7 @@ const passwords = {
 
 let currentUser = "";
 
-// Function to check the entered password and allow access to love notes
+// Check if the entered password is correct
 function checkPassword() {
   const inputPassword = document.getElementById("password").value;
   const wrongPasswordMessage = document.getElementById("wrong-password-message");
@@ -17,51 +20,46 @@ function checkPassword() {
     wrongPasswordMessage.innerHTML = "";
     document.getElementById("password-section").style.display = "none";
     document.getElementById("notes-section").style.display = "block";
-    loadNotes(); // Load existing notes after successful password entry
+    loadNotes();
   } else if (inputPassword === passwords.koi) {
     currentUser = "Koi ♡>ω<♡";
     wrongPasswordMessage.innerHTML = "";
     document.getElementById("password-section").style.display = "none";
     document.getElementById("notes-section").style.display = "block";
-    loadNotes(); // Load existing notes after successful password entry
+    loadNotes();
   } else {
     wrongPasswordMessage.innerHTML = "Wrong password, try again!";
   }
 }
 
-// Load notes from Firebase Firestore
+// Load notes from Firestore and display them
 async function loadNotes() {
+  const querySnapshot = await getDocs(collection(db, "loveNotes"));
   const notesList = document.getElementById("notes-list");
-  notesList.innerHTML = ""; // Clear existing notes
+  notesList.innerHTML = "";
 
-  try {
-    // Fetch all notes from the 'loveNotes' collection in Firestore
-    const querySnapshot = await getDocs(collection(db, "loveNotes"));
-    querySnapshot.forEach((doc) => {
-      const noteItem = document.createElement("div");
-      noteItem.className = "note-item";
-      noteItem.innerHTML = `<strong>${doc.data().name}</strong>: ${doc.data().text}`;
-      notesList.appendChild(noteItem);
-    });
-  } catch (error) {
-    console.error("Error fetching notes: ", error);
-  }
+  querySnapshot.forEach((doc) => {
+    const noteData = doc.data();
+    const noteItem = document.createElement("div");
+    noteItem.className = "note-item";
+    noteItem.innerHTML = `<strong>${noteData.name}</strong>: ${noteData.text}`;
+    notesList.appendChild(noteItem);
+  });
 }
 
-// Add a new note to Firebase Firestore
+// Add a new note to Firestore
 async function addNote() {
   const newNote = document.getElementById("new-note").value;
   if (newNote) {
     try {
-      // Add a new note document to the 'loveNotes' collection
       await addDoc(collection(db, "loveNotes"), {
         name: currentUser,
         text: newNote
       });
-      document.getElementById("new-note").value = ""; // Clear the input after adding the note
-      loadNotes(); // Reload the notes to reflect the new note
-    } catch (error) {
-      console.error("Error adding note: ", error);
+      document.getElementById("new-note").value = "";
+      loadNotes();
+    } catch (e) {
+      console.error("Error adding note: ", e);
     }
   }
 }
