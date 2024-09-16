@@ -1,60 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Our Secret Love Notes</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Secret Love Notes</title>
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+      import { getFirestore, collection, addDoc, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyB6QUxxoIBxtgmBf_AJIchVY1s_QAfnh7I",
+        authDomain: "deepaktech-fe70f.firebaseapp.com",
+        projectId: "deepaktech-fe70f",
+        storageBucket: "deepaktech-fe70f.appspot.com",
+        messagingSenderId: "894349316629",
+        appId: "1:894349316629:web:680353b6e18f90878f741c",
+        measurementId: "G-WQJQ1S5F9F"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      // Function to add a new note to Firestore
+      async function addNote() {
+        const newNote = document.getElementById("new-note").value;
+        if (newNote) {
+          await addDoc(collection(db, "loveNotes"), {
+            name: currentUser,
+            text: newNote,
+            timestamp: new Date()
+          });
+          document.getElementById("new-note").value = "";
+          loadNotes(); // Reload notes after adding
+        }
+      }
+
+      // Function to load notes from Firestore
+      async function loadNotes() {
+        const notesList = document.getElementById("notes-list");
+        notesList.innerHTML = "";
+        const q = query(collection(db, "loveNotes"), orderBy("timestamp", "desc"));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          const noteItem = document.createElement("div");
+          noteItem.className = "note-item";
+          noteItem.innerHTML = `<strong>${doc.data().name}</strong>: ${doc.data().text}`;
+          notesList.appendChild(noteItem);
+        });
+      }
+    </script>
+
+    <!-- Your CSS here -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div id="password-section">
-    <h2>Enter Password to Access Love Notes</h2>
-    <input type="password" id="password" placeholder="Enter password">
-    <button onclick="checkPassword()">Submit</button>
-    <div id="wrong-password-message"></div>
-  </div>
+    <div id="password-section">
+        <h2>Enter Password to Access Love Notes</h2>
+        <input type="password" id="password" placeholder="Enter password">
+        <button onclick="checkPassword()">Submit</button>
+        <div id="wrong-password-message"></div>
+    </div>
 
-  <div id="notes-section" style="display: none;">
-    <h1>Love Notes ❤️</h1>
-    <textarea id="new-note" placeholder="Leave a love note..."></textarea><br>
-    <button onclick="addNote()">Add Note</button>
-    <h2>Our Notes</h2>
-    <div id="notes-list"></div>
-  </div>
+    <div id="notes-section" style="display: none;">
+        <h1>Love Notes ❤️</h1>
+        <textarea id="new-note" placeholder="Leave a love note..."></textarea><br>
+        <button onclick="addNote()">Add Note</button>
+        <h2>Our Notes</h2>
+        <div id="notes-list"></div>
+    </div>
 
-  <!-- Firebase configuration -->
-  <script type="module">
-    // Import the functions from Firebase SDK
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    <!-- Your custom JS -->
+    <script>
+      let currentUser = "";
+      const passwords = {
+        koibito: "KoibitoPass",
+        koi: "KoiPass"
+      };
 
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyB6QUxxoIBxtgmBf_AJIchVY1s_QAfnh7I",
-      authDomain: "deepaktech-fe70f.firebaseapp.com",
-      projectId: "deepaktech-fe70f",
-      storageBucket: "deepaktech-fe70f.appspot.com",
-      messagingSenderId: "894349316629",
-      appId: "1:894349316629:web:ba0643eea58688448f741c",
-      measurementId: "G-NS6T8293VR"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // Two passwords for identifying users
-    const passwords = {
-      koibito: "KoibitoPass", // Password for you
-      koi: "KoiPass"          // Password for your girlfriend
-    };
-
-    let currentUser = "";
-
-    // Function to check the password and show the notes section
-    function checkPassword() {
-      const inputPassword = document.getElementById("password").value;
-      const wrongPasswordMessage = document.getElementById("wrong-password-message");
-
-      if (inputPassword === passwords.koibito) {
-        currentUser =
+      function checkPassword() {
+        const inputPassword = document.getElementById("password").value;
+        if (inputPassword === passwords.koibito) {
+          currentUser = "Koibito ♡";
+          document.getElementById("password-section").style.display = "none";
+          document.getElementById("notes-section").style.display = "block";
+          loadNotes();
+        } else if (inputPassword === passwords.koi) {
+          currentUser = "Koi ♡>ω<♡";
+          document.getElementById("password-section").style.display = "none";
+          document.getElementById("notes-section").style.display = "block";
+          loadNotes();
+        } else {
+          document.getElementById("wrong-password-message").innerText = "Wrong password, try again!";
+        }
+      }
+    </script>
+</body>
+</html>
