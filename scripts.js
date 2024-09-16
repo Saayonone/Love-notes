@@ -1,3 +1,5 @@
+import { db, collection, addDoc, getDocs } from './index.html';
+
 const passwords = {
   koibito: "KoibitoPass", // Password for you
   koi: "KoiPass"          // Password for your girlfriend
@@ -5,7 +7,6 @@ const passwords = {
 
 let currentUser = "";
 
-// Check password for accessing notes
 function checkPassword() {
   const inputPassword = document.getElementById("password").value;
   const wrongPasswordMessage = document.getElementById("wrong-password-message");
@@ -27,43 +28,29 @@ function checkPassword() {
   }
 }
 
-// Load notes from Firestore database
+// Load notes from Firestore
 async function loadNotes() {
   const notesList = document.getElementById("notes-list");
-  notesList.innerHTML = ""; // Clear previous notes
+  notesList.innerHTML = "";
 
-  try {
-    const querySnapshot = await getDocs(collection(window.db, "loveNotes"));
-    querySnapshot.forEach((doc) => {
-      const note = doc.data();
-      const noteItem = document.createElement("div");
-      noteItem.className = "note-item";
-      noteItem.innerHTML = `<strong>${note.name}</strong> (${note.time}): ${note.text}`;
-      notesList.appendChild(noteItem);
-    });
-  } catch (error) {
-    console.error("Error loading notes: ", error);
-  }
+  const querySnapshot = await getDocs(collection(db, "loveNotes"));
+  querySnapshot.forEach((doc) => {
+    const noteItem = document.createElement("div");
+    noteItem.className = "note-item";
+    noteItem.innerHTML = `<strong>${doc.data().name}</strong>: ${doc.data().text}`;
+    notesList.appendChild(noteItem);
+  });
 }
 
 // Add a new note to Firestore
 async function addNote() {
   const newNote = document.getElementById("new-note").value;
   if (newNote) {
-    const currentTime = new Date().toLocaleString(); // Get current time
-
-    try {
-      // Add new note to Firestore
-      await addDoc(collection(window.db, "loveNotes"), {
-        name: currentUser,
-        text: newNote,
-        time: currentTime
-      });
-
-      document.getElementById("new-note").value = ""; // Clear the input field
-      loadNotes(); // Reload notes to show the new one
-    } catch (error) {
-      console.error("Error adding note: ", error);
-    }
+    await addDoc(collection(db, "loveNotes"), {
+      name: currentUser,
+      text: newNote
+    });
+    document.getElementById("new-note").value = "";
+    loadNotes();
   }
 }
