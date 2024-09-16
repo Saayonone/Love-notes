@@ -32,14 +32,18 @@ async function loadNotes() {
   const notesList = document.getElementById("notes-list");
   notesList.innerHTML = ""; // Clear previous notes
 
-  const querySnapshot = await getDocs(collection(window.db, "loveNotes"));
-  querySnapshot.forEach((doc) => {
-    const note = doc.data();
-    const noteItem = document.createElement("div");
-    noteItem.className = "note-item";
-    noteItem.innerHTML = `<strong>${note.name}</strong> (${note.time}): ${note.text}`;
-    notesList.appendChild(noteItem);
-  });
+  try {
+    const querySnapshot = await getDocs(collection(window.db, "loveNotes"));
+    querySnapshot.forEach((doc) => {
+      const note = doc.data();
+      const noteItem = document.createElement("div");
+      noteItem.className = "note-item";
+      noteItem.innerHTML = `<strong>${note.name}</strong> (${note.time}): ${note.text}`;
+      notesList.appendChild(noteItem);
+    });
+  } catch (error) {
+    console.error("Error loading notes: ", error);
+  }
 }
 
 // Add a new note to Firestore
@@ -48,14 +52,18 @@ async function addNote() {
   if (newNote) {
     const currentTime = new Date().toLocaleString(); // Get current time
 
-    // Add new note to Firestore
-    await addDoc(collection(window.db, "loveNotes"), {
-      name: currentUser,
-      text: newNote,
-      time: currentTime
-    });
+    try {
+      // Add new note to Firestore
+      await addDoc(collection(window.db, "loveNotes"), {
+        name: currentUser,
+        text: newNote,
+        time: currentTime
+      });
 
-    document.getElementById("new-note").value = ""; // Clear the input field
-    loadNotes(); // Reload notes to show the new one
+      document.getElementById("new-note").value = ""; // Clear the input field
+      loadNotes(); // Reload notes to show the new one
+    } catch (error) {
+      console.error("Error adding note: ", error);
+    }
   }
 }
