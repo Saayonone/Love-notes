@@ -1,4 +1,18 @@
-//My love note codes
+// Firebase Configuration (paste your Firebase config here)
+const firebaseConfig = {
+  apiKey: "AIzaSyB6QUxxoIBxtgmBf_AJIchVY1s_QAfnh7I",
+  authDomain: "deepaktech-fe70f.firebaseapp.com",
+  projectId: "deepaktech-fe70f",
+  storageBucket: "deepaktech-fe70f.appspot.com",
+  messagingSenderId: "894349316629",
+  appId: "1:894349316629:web:ba0643eea58688448f741c",
+  measurementId: "G-NS6T8293VR"
+};
+
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 const passwords = {
   koibito: "KoibitoPass", // Password for you
   koi: "KoiPass"          // Password for your girlfriend
@@ -27,26 +41,33 @@ function checkPassword() {
   }
 }
 
-// Store notes in local storage for simplicity
+// Load notes from Firebase Firestore
 function loadNotes() {
-  const notes = JSON.parse(localStorage.getItem('loveNotes')) || [];
   const notesList = document.getElementById("notes-list");
   notesList.innerHTML = "";
-  notes.forEach(note => {
-    const noteItem = document.createElement("div");
-    noteItem.className = "note-item";
-    noteItem.innerHTML = `<strong>${note.name}</strong>: ${note.text}`;
-    notesList.appendChild(noteItem);
+
+  db.collection("loveNotes").orderBy("timestamp", "asc").get().then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      const noteData = doc.data();
+      const noteItem = document.createElement("div");
+      noteItem.className = "note-item";
+      noteItem.innerHTML = `<strong>${noteData.name}</strong>: ${noteData.text} <br><small>${new Date(noteData.timestamp).toLocaleString()}</small>`;
+      notesList.appendChild(noteItem);
+    });
   });
 }
 
+// Add a new note to Firebase Firestore
 function addNote() {
   const newNote = document.getElementById("new-note").value;
   if (newNote) {
-    const notes = JSON.parse(localStorage.getItem('loveNotes')) || [];
-    notes.push({ name: currentUser, text: newNote });
-    localStorage.setItem('loveNotes', JSON.stringify(notes));
-    document.getElementById("new-note").value = "";
-    loadNotes();
+    db.collection("loveNotes").add({
+      name: currentUser,
+      text: newNote,
+      timestamp: new Date().getTime()  // Add timestamp
+    }).then(() => {
+      document.getElementById("new-note").value = "";
+      loadNotes();
+    });
   }
 }
